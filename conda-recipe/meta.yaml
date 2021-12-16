@@ -1,0 +1,21 @@
+package:
+  name: pyutils
+  version: 0.0.1
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+requirements:
+  build:
+    - python=3.8
+    - setuptools
+  run:
+    - python=3.8
+    - anaconda-client>=1.7.2
+    - more-itertools>=8.4.0
+test:
+  imports:
+    - yspecies
+
+source:
+  path: ../
