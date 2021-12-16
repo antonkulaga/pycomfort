@@ -9,11 +9,11 @@ with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
 
 VERSION = '0.0.1'
 DESCRIPTION = 'Python utilities'
-LONG_DESCRIPTION = 'A package with python helper functions to make your life easier'
+LONG_DESCRIPTION = 'A package with python helper functions to make your life more comfortable'
 
 # Setting up
 setup(
-    name="pyutils",
+    name="pycomfort",
     version=VERSION,
     author="antonkulaga (Anton Kualga)",
     author_email="<antonkulaga@gmail.com>",

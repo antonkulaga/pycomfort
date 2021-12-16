@@ -1,8 +1,9 @@
-name: pyutils
+name: pycomfort
 channels:
   - defaults
   - conda-forge
 dependencies:
   - python=3.8
+  - twine
   - pip:
       - pyfunctional
