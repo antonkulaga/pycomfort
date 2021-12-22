@@ -2,7 +2,8 @@ from pathlib import Path
 from typing import Union
 from functional import seq
 
-def children(p: Path):
+
+def children(p: Path) -> seq:
     """
     files and subfolders in the folder as sequence
     :param p:
@@ -10,7 +11,8 @@ def children(p: Path):
     """
     return seq(list(p.iterdir()))
 
-def dirs(p: Path):
+
+def dirs(p: Path) -> seq:
     """
     subfolders in the folder as sequence
     :param p:
@@ -18,7 +20,8 @@ def dirs(p: Path):
     """
     return children(p).filter(lambda f: f.is_dir())
 
-def files(p: Path):
+
+def files(p: Path) -> seq:
     """
     only files in the folder
     :param p:
@@ -26,7 +29,7 @@ def files(p: Path):
     """
     return children(p).filter(lambda f: f.is_file())
 
-def with_ext(p: Path, ext: str):
+def with_ext(p: Path, ext: str) -> seq:
     """
     files in the folder that have appropriate extension
     :param p:
@@ -35,8 +38,10 @@ def with_ext(p: Path, ext: str):
     """
     return files(p).filter(lambda f: ext in f.suffix)
 
-def by_ext(p: Path, ext: str):
+
+def by_ext(p: Path, ext: str) -> seq:
     return files(p).filter(lambda f: ext in f.suffix).group_by(lambda f: f.suffix)
+
 
 def rename_files(dir: Union[seq, Path], has: str, what: str, to: str):
     """
@@ -52,8 +57,8 @@ def rename_files(dir: Union[seq, Path], has: str, what: str, to: str):
     else:
         return dir.map(lambda p: p if not has in p.name else p.rename(Path(p.parent, p.name.replace(what, to))))
 
-#rename files that do not contain part
-def rename_not_files(files: seq, not_has: str, what: str, to: str):
+
+def rename_not_files(files: seq, not_has: str, what: str, to: str) -> seq:
     """
     rename files that do NOT contain a substring
     :param files: sequence of files
@@ -64,12 +69,13 @@ def rename_not_files(files: seq, not_has: str, what: str, to: str):
     """
     return files.map(lambda p: p if not_has in p.name else p.rename(Path(p.parent, p.name.replace(what, to))))
 
+
 def tprint(p: Path, prefix: str = "", debug: bool = False):
     """
     Pretty-print the content of the folder recursively
-    :param p:
-    :param prefix:
-    :param debug:
+    :param p: path to print content for
+    :param prefix: prefix to add in the beginning
+    :param debug: adding debug statements to separate files from folders
     :return:
     """
     fl = files(p)
