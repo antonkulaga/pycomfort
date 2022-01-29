@@ -43,19 +43,48 @@ def by_ext(p: Path, ext: str) -> seq:
     return files(p).filter(lambda f: ext in f.suffix).group_by(lambda f: f.suffix)
 
 
-def rename_files(dir: Union[seq, Path], has: str, what: str, to: str):
+def rename_files_with_dictionary(files_or_path: Union[seq, Path], dictionary: dict, test: bool = False):
+    """
+    File renaming based on a dictionary oldsubstring -> newsubstring pairs
+    :param files_or_path:
+    :param dictionary:
+    :param test:
+    :return:
+    """
+
+    if isinstance(files_or_path, Path):
+        if files_or_path.is_dir():
+            return rename_files_with_dictionary(files(files_or_path), dictionary=dictionary)
+        else:
+            return rename_files_with_dictionary(seq(files_or_path),  dictionary=dictionary)
+    else:
+        results = []
+        for p in files_or_path:
+            for k, v in dictionary.items():
+                if k in p.name:
+                    new_name = p.name.replace(k, v)
+                    if not test:
+                        p.rename(Path(p.parent, p.name.replace(k, v)))
+                    results.append((p.name, new_name))
+        return results
+
+
+def rename_files(files_or_path: Union[seq, Path], has: str, what: str, to: str):
     """
     rename files that contain a substring
-    :param files: sequence of files or folder #TODO: update to Union[seq, Path] when switched to python 3.10
+    :param files_or_path: sequence of files or folder #TODO: update to Union[seq, Path] when switched to python 3.10
     :param has: substring to search for
     :param what: substring to substitute (not always the same as "has")
     :param to: substitute to string
     :return: renamed files
     """
-    if isinstance(dir, Path):
-        return rename_files(files(dir), has, what, to)
+    if isinstance(files_or_path, Path):
+        if files_or_path.is_dir():
+            return rename_files(files(files_or_path), has, what, to)
+        else:
+            return rename_files(seq(files_or_path), has, what, to)
     else:
-        return dir.map(lambda p: p if not has in p.name else p.rename(Path(p.parent, p.name.replace(what, to))))
+        return files_or_path.map(lambda p: p if has not in p.name else p.rename(Path(p.parent, p.name.replace(what, to))))
 
 
 def rename_not_files(files: seq, not_has: str, what: str, to: str) -> seq:
