@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Union
+from typing import Union, Optional
 from functional import seq
 
 
@@ -29,6 +29,8 @@ def files(p: Path) -> seq:
     """
     return children(p).filter(lambda f: f.is_file())
 
+
+
 def with_ext(p: Path, ext: str) -> seq:
     """
     files in the folder that have appropriate extension
@@ -37,6 +39,7 @@ def with_ext(p: Path, ext: str) -> seq:
     :return:
     """
     return files(p).filter(lambda f: ext in f.suffix)
+
 
 
 def by_ext(p: Path, ext: str) -> seq:
@@ -69,6 +72,7 @@ def rename_files_with_dictionary(files_or_path: Union[seq, Path], dictionary: di
         return results
 
 
+
 def rename_files(files_or_path: Union[seq, Path], has: str, what: str, to: str):
     """
     rename files that contain a substring
@@ -97,6 +101,33 @@ def rename_not_files(files: seq, not_has: str, what: str, to: str) -> seq:
     :return: renamed files
     """
     return files.map(lambda p: p if not_has in p.name else p.rename(Path(p.parent, p.name.replace(what, to))))
+
+
+def replace_in_file(file: Path, what: str, to: str, output: Optional[Path] = None):
+    in_place = output is None
+    with file.open("r+") as text_file:
+        s: str = text_file.read().replace(what, to)
+        if in_place:
+            text_file.write(s)
+            return file
+        else:
+            output.write_text(s)
+            return output
+
+
+def replace_from_dict_in_file(file: Path, replacement: dict, output: Optional[Path] = None) -> Path:
+    in_place = output is None
+    with file.open("r+") as text_file:
+        s: str = text_file.read()
+        for old, new in replacement.items():
+            s = s.replace(old, new) # warning: mutation!
+        if in_place:
+            text_file.write(s)
+            return file
+        else:
+            output.write_text(s)
+            return output
+
 
 
 def tprint(p: Path, prefix: str = "", debug: bool = False):

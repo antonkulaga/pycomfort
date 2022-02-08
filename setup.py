@@ -7,7 +7,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = "\n" + fh.read()
 
-VERSION = '0.0.5'
+VERSION = '0.0.7'
 DESCRIPTION = 'Pycomfort - Python helper methods to make life easier'
 LONG_DESCRIPTION = 'A package with python helper functions to make your life more comfortable'
 
@@ -20,8 +20,8 @@ setup(
     description=DESCRIPTION,
     long_description_content_type="text/markdown",
     long_description=long_description,
-    packages=find_packages(),
-    install_requires=['pyfunctional', 'more-itertools'],
+    packages=find_packages("pycomfort"),
+    install_requires=['pyfunctional', 'more-itertools', 'click', 'more-itertools'],
     keywords=['python', 'utils', 'files'],
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
@@ -33,5 +33,11 @@ setup(
         "Operating System :: Unix",
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
-    ]
+    ],
+    entry_points={
+     "console_scripts": [
+         "replace=pycomfort.comfort:replace",
+         "replace_dict=pycomfort.comfort:replace_dict"
+     ]
+    }
 )
