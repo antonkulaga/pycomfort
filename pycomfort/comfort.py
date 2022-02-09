@@ -5,6 +5,7 @@ from pycomfort.files import replace_in_file, replace_from_dict_in_file
 from pathlib import Path
 from typing import Union, Optional
 
+
 @click.command("replace")
 @click.option('--file', type=click.Path(exists=True), help="rename file with substitution")
 @click.option('--what', help="substitute --from")
@@ -20,7 +21,8 @@ def replace(file: str, what: str, to: str, output: Optional[str]):
 @click.option('--file', type=click.Path(exists=True), help="rename file with substitution")
 @click.option('--dictionary', type=click.Path(exists=True), help="dictionary to load from")
 @click.option('--output', help="optional output, will rewrite --file is not output provided")
-def replace_dict(file: str, dictionary: dict, output: Optional[str]):
+@click.option('--verbose', type=click.BOOL, help="if we should output more to console")
+def replace_dict(file: str, dictionary: dict, output: Optional[str], verbose: bool = False):
     print(f"replacing from {dict} in {file}")
     # reading the data from the file
     with Path(dictionary).open("r+") as f:
@@ -30,5 +32,8 @@ def replace_dict(file: str, dictionary: dict, output: Optional[str]):
     for k, v in js.items():
         print(f"REPLACE {k} WITH {v}\n")
     where = None if output is None else Path(output)
-    return replace_from_dict_in_file(Path(file), js, where)
+    return replace_from_dict_in_file(Path(file), js, where, verbose)
 
+
+if __name__ == '__main__':
+    replace()
