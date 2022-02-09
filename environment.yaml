@@ -6,6 +6,7 @@ dependencies:
   - python=3.9
   - twine
   - more-itertools
+  - setuptools
   - click
   - pip:
       - pyfunctional
