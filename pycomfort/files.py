@@ -119,21 +119,22 @@ def replace_from_dict_in_file(file: Path, replacement: dict, output: Optional[Pa
     in_place = output is None
     with file.open("r+") as text_file:
         s: str = text_file.read()
-        for old, new in replacement.items():
-            if old in s:
-                if verbose:
-                    print(f"REPLACING {old}\n WITH {new}")
-                s = s.replace(old, new) # warning: mutation!
-        if in_place:
+    for old, new in replacement.items():
+        if old in s:
             if verbose:
-                print(f"editing {str(file)} in place")
-            text_file.write(s)
-            return file
-        else:
-            if verbose:
-                print(f"writing {str(file)} with replacements to {str(output)}")
-            output.write_text(s)
-            return output
+                print(f"REPLACING {old}\n WITH {new}")
+            s = s.replace(old, new) # warning: mutation!
+    if in_place:
+        if verbose:
+            print(f"editing {str(file)} in place")
+        with file.open("w") as rewrite:
+            rewrite.write(s)
+        return file
+    else:
+        if verbose:
+            print(f"writing {str(file)} with replacements to {str(output)}")
+        output.write_text(s)
+        return output
 
 
 

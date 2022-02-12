@@ -22,7 +22,7 @@ def replace(file: str, what: str, to: str, output: Optional[str]):
 @click.option('--dictionary', type=click.Path(exists=True), help="dictionary to load from")
 @click.option('--output', help="optional output, will rewrite --file is not output provided")
 @click.option('--verbose', type=click.BOOL, help="if we should output more to console")
-def replace_dict(file: str, dictionary: dict, output: Optional[str], verbose: bool = False):
+def replace_dict(file: str, dictionary: str, output: Optional[str], verbose: bool = False):
     print(f"replacing from {dict} in {file}")
     # reading the data from the file
     with Path(dictionary).open("r+") as f:
