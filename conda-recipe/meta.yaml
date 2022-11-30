@@ -1,6 +1,6 @@
 package:
   name: pycomfort
-  version: 0.0.2
+  version: 0.0.10
 channels:
   - conda-forge
   - bioconda
@@ -8,16 +8,16 @@ channels:
 requirements:
   build:
     - python:
-        - 3.7
-        - 3.8
         - 3.9
+        - 3.10
+        - 3.11
     - setuptools
     - anaconda-client>=1.7.2
   run:
     - python:
-        - 3.7
-        - 3.8
         - 3.9
+        - 3.10
+        - 3.11
     - more-itertools>=8.4.0
     - pip:
         - pyfunctional

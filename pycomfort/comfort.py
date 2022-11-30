@@ -10,7 +10,7 @@ from typing import Union, Optional
 @click.option('--file', type=click.Path(exists=True), help="rename file with substitution")
 @click.option('--what', help="substitute --from")
 @click.option('--to', help="substitute --to")
-@click.option('--output', help="optional output, will rewirte --file is not output provided")
+@click.option('--output', help="optional output, will rewrite --file is not output provided")
 def replace(file: str, what: str, to: str, output: Optional[str]):
     print(f"replacing {what} to {to} in {file}")
     where = None if output is None else Path(output)

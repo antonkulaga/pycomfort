@@ -103,7 +103,15 @@ def rename_not_files(files: seq, not_has: str, what: str, to: str) -> seq:
     return files.map(lambda p: p if not_has in p.name else p.rename(Path(p.parent, p.name.replace(what, to))))
 
 
-def replace_in_file(file: Path, what: str, to: str, output: Optional[Path] = None):
+def replace_in_file(file: Path, what: str, to: str, output: Optional[Path] = None) -> Path:
+    """
+    Replaces text in the file
+    :param file: file to make replacement
+    :param what: which text to replace
+    :param to: to what string
+    :param output: path to the output file (or same file if no output provided)
+    :return:
+    """
     in_place = output is None
     with file.open("r+") as text_file:
         s: str = text_file.read().replace(what, to)
@@ -116,6 +124,13 @@ def replace_in_file(file: Path, what: str, to: str, output: Optional[Path] = Non
 
 
 def replace_from_dict_in_file(file: Path, replacement: dict, output: Optional[Path] = None, verbose: bool = False) -> Path:
+    """
+    :param file: Path to the file
+    :param replacement: dictionary for replacing test in files
+    :param output:
+    :param verbose:
+    :return:
+    """
     in_place = output is None
     with file.open("r+") as text_file:
         s: str = text_file.read()
