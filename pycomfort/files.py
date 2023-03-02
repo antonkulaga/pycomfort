@@ -1,9 +1,10 @@
 from pathlib import Path
-from typing import Union, Optional
+from typing import Union, Optional, Callable
 from functional import seq
+from functional.pipeline import Sequence
 
 
-def children(p: Path) -> seq:
+def children(p: Path) -> Sequence:
     """
     files and subfolders in the folder as sequence
     :param p:
@@ -12,7 +13,7 @@ def children(p: Path) -> seq:
     return seq(list(p.iterdir()))
 
 
-def dirs(p: Path) -> seq:
+def dirs(p: Path) -> Sequence:
     """
     subfolders in the folder as sequence
     :param p:
@@ -21,7 +22,7 @@ def dirs(p: Path) -> seq:
     return children(p).filter(lambda f: f.is_dir())
 
 
-def files(p: Path) -> seq:
+def files(p: Path) -> Sequence:
     """
     only files in the folder
     :param p:
@@ -30,8 +31,7 @@ def files(p: Path) -> seq:
     return children(p).filter(lambda f: f.is_file())
 
 
-
-def with_ext(p: Path, ext: str) -> seq:
+def with_ext(p: Path, ext: str) -> Sequence:
     """
     files in the folder that have appropriate extension
     :param p:
@@ -41,8 +41,7 @@ def with_ext(p: Path, ext: str) -> seq:
     return files(p).filter(lambda f: ext in f.suffix)
 
 
-
-def by_ext(p: Path, ext: str) -> seq:
+def by_ext(p: Path, ext: str) -> Sequence:
     return files(p).filter(lambda f: ext in f.suffix).group_by(lambda f: f.suffix)
 
 
@@ -70,7 +69,6 @@ def rename_files_with_dictionary(files_or_path: Union[seq, Path], dictionary: di
                         p.rename(Path(p.parent, p.name.replace(k, v)))
                     results.append((p.name, new_name))
         return results
-
 
 
 def rename_files(files_or_path: Union[seq, Path], has: str, what: str, to: str):
@@ -152,13 +150,35 @@ def replace_from_dict_in_file(file: Path, replacement: dict, output: Optional[Pa
         return output
 
 
+def traverse(p: Path, fun: Callable[[Path], bool] = None, max_depth: int = -1, flatten: bool = True, depth: int = 0) -> list:
+    """
+    traverses the files according to the condition and returns sequence with results
+    :param p: path to start from
+    :param fun: function to filter
+    :param max_depth: how deep to traverse
+    :param flatten: if we should flatten results
+    :param depth:
+    :return:
+    """
+    fl = files(p).to_list() if fun is None else files(p).filter(fun).to_list()
+    folds = dirs(p).to_list() if fun is None else dirs(p).filter(fun).to_list()
+    if depth == max_depth:
+        return fl + folds
+    else:
+        if flatten:
+            return fl + folds + dirs(p).flat_map(lambda d: traverse(d, fun, max_depth, flatten, depth + 1)).to_list()
+        else:
+            return fl + folds + dirs(p).map(lambda d: traverse(d, fun, max_depth, flatten, depth + 1)).to_list()
 
-def tprint(p: Path, prefix: str = "", debug: bool = False):
+
+def tprint(p: Path, max_depth: int = -1,  prefix: str = "", debug: bool = False, depth: int = 0):
     """
     Pretty-print the content of the folder recursively
     :param p: path to print content for
+    :param max_depth: how deep to traverse, by default -1 which is unlimited
     :param prefix: prefix to add in the beginning
     :param debug: adding debug statements to separate files from folders
+    :param depth: current depth
     :return:
     """
     fl = files(p)
@@ -168,7 +188,7 @@ def tprint(p: Path, prefix: str = "", debug: bool = False):
             print(prefix + "FILES:")
         files(p).for_each(lambda f: print(f"\t"+prefix+f.name))
     folders = dirs(p)
-    if folders.len() > 0:
+    if folders.len() > 0 and depth != max_depth:
         if debug:
             print(prefix+"FOLDERS")
-        folders.for_each(lambda d: tprint(d, f"\t"+prefix))
+        folders.for_each(lambda d: tprint(d, max_depth=max_depth, prefix = f"\t"+prefix, debug=debug, depth=depth+1))

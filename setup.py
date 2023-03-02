@@ -7,7 +7,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = "\n" + fh.read()
 
-VERSION = '0.0.10'
+VERSION = '0.0.11'
 DESCRIPTION = 'Pycomfort - Python helper methods to make life easier'
 LONG_DESCRIPTION = 'A package with python helper functions to make your life more comfortable'
 

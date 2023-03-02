@@ -1,7 +1,7 @@
 # pycomfort
 Utility methods for python code
 
-So far contains only file/folder related methods but will be extended in the future
+It heavily uses functional approach and pyfunctional library to ease the work with file traversing and other routine tasks.
 
 ## files.py
 
@@ -15,7 +15,8 @@ The most important methods are:
 * def rename_not_files(files: seq, not_has: str, what: str, to: str) -> seq: #rename files that do NOT contain a substring
 * def replace_in_file(file: Path, what: str, to: str, output: Optional[Path] = None): #replaces string in a file
 * def replace_from_dict_in_file(file: Path, replacement: dict, output: Optional[Path] = None, verbose: bool = False) -> Path: # replaces the text in the file based on key-value pairs in the dictionary
-* def tprint(p: Path, prefix: str = "", debug: bool = False): #prints the file tree
+* def tprint(p: Path, max_depth: int = -1,  prefix: str = "", debug: bool = False, depth: int = 0: #prints the file tree
+* def traverse(p: Path, fun: Callable[[Path], bool] = None, max_depth: int = -1, flatten: bool = True, depth: int = 0) -> list # traverses the file system searching for sample
 
 ## executables
 
