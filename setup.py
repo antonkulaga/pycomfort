@@ -15,13 +15,13 @@ LONG_DESCRIPTION = 'A package with python helper functions to make your life mor
 setup(
     name="pycomfort",
     version=VERSION,
-    author="antonkulaga (Anton Kualga)",
+    author="antonkulaga (Anton Kulaga)",
     author_email="<antonkulaga@gmail.com>",
     description=DESCRIPTION,
     long_description_content_type="text/markdown",
     long_description=long_description,
     packages=find_packages(),
-    install_requires=['pyfunctional', 'more-itertools', 'click'],
+    install_requires=['pyfunctional', 'more-itertools', 'click', 'loguru', 'python-dotenv', 'Deprecated'],
     keywords=['python', 'utils', 'files'],
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
