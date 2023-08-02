@@ -19,11 +19,10 @@ class LogLevel(Enum):
 
 LOG_LEVELS = [loader.value for loader in LogLevel]
 
-
-def configure_logger(log_level: Union[str, LogLevel]):
+def configure_logger(log_level: Union[str, LogLevel], add_stdout: bool = False):
     level = log_level.value if isinstance(log_level, LogLevel) else log_level
     # yes, it is duplicate but it is nice to avoid cross-module dependencies here
-    if level.upper() != LogLevel.NONE.value:
+    if level.upper() != LogLevel.NONE.value and add_stdout:
         logger.add(sys.stdout, level=level.upper())
     return logger
 
