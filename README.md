@@ -1,12 +1,29 @@
-# pycomfort
+# pycomfort 
+[![PyPI version](https://badge.fury.io/py/pycomfort.svg)](https://badge.fury.io/py/pycomfort)
+[![Tests](https://github.com/antonkulaga/pycomfort/actions/workflows/tests.yml/badge.svg)](https://github.com/antonkulaga/pycomfort/actions/workflows/tests.yml)
+[![Python Versions](https://img.shields.io/pypi/pyversions/pycomfort.svg)](https://pypi.org/project/pycomfort/)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-A Python utility library that provides convenient methods for file operations and text manipulation using a functional programming approach.
+A Python utility library that provides convenient methods for file operations and text manipulation using a functional programming approach. Built with developer comfort in mind, pycomfort offers:
+
+- 🗂️ **Functional File Operations** - Chain operations on files and directories using pyfunctional
+- 🔄 **Smart Text Replacement** - Easily replace text patterns in single or multiple files
+- 📝 **Enhanced Logging** - Beautiful hierarchical logging based on Eliot library with timing and argument tracking
+- 🛠️ **CLI Tools** - Command-line utilities for common file and text operations
 
 ## Installation
 
 Install using pip:
 
+```bash
+pip install pycomfort
+```
+
 Or preferably using Poetry:
+
+```bash
+poetry add pycomfort
+```
 
 ## Features
 
@@ -105,6 +122,55 @@ rendered_file=Path("logs/readable.log")
 
 The package provides command-line tools for text replacement:
 
+#### Simple Text Replacement
+
+Replace text in a file using the `replace` command:
+
+```bash
+replace --file=config.txt --what="DEBUG" --to="INFO"
+```
+
+
+Options:
+- `--file`: Input file path (required)
+- `--what`: Text to search for and replace (required)
+- `--to`: Text to replace matches with (required)
+- `--output`: Optional output file path. If not provided, modifies the input file in-place
+
+#### Dictionary-based Replacement
+
+Replace multiple patterns at once using a JSON dictionary with the `replace_dict` command:
+
+```bash
+replace_dict --file=config.txt --dictionary=replacements.json --verbose
+```
+
+Options:
+- `--file`: Input file path (required)
+- `--dictionary`: Path to a JSON file containing replacement patterns (required)
+- `--verbose`: Enable verbose logging
+
+#### Replace Text in Multiple Files Using a Dictionary
+
+Replace multiple patterns in all markdown files:
+
+```bash
+replace_dict --file=docs --dictionary=replacements.json --output=docs_new --verbose
+```
+where `replacements.json` is:
+```json
+{
+"DEBUG": "INFO",
+"WARNING": "WARN",
+"ERROR": "ERR"
+}
+
+Options:
+- `--file`: Input file path (required)
+- `--dictionary`: Path to JSON file containing old->new text mappings (required)
+- `--output`: Optional output file path. If not provided, modifies the input file in-place
+- `--verbose`: Print detailed replacement information
+
 ## Development Setup
 
 1. Clone the repository:
@@ -125,3 +191,12 @@ To publish a new version to PyPI:
 ## License
 
 Apache License 2.0 - See LICENSE file for details.
+
+Example `replacements.json`:
+```json
+{
+    "DEBUG": "INFO",
+    "WARNING": "WARN",
+    "ERROR": "ERR"
+}
+```
