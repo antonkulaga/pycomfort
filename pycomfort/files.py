@@ -4,39 +4,51 @@ from functional import seq
 from functional.pipeline import Sequence
 
 
-def children(p: Path) -> Sequence:
+def children(p: Union[Path, str]) -> Sequence:
     """
-    files and subfolders in the folder as sequence
-    :param p:
-    :return:
+    Returns a sequence of all files and subfolders in the given directory.
+    
+    Args:
+        p: Path or string path to the directory
     """
-    return seq(list(p.iterdir()))
+    path = Path(p) if isinstance(p, str) else p
+    return seq(list(path.iterdir()))
 
 
-def dirs(p: Path) -> Sequence:
+def dirs(p: Union[Path, str]) -> Sequence:
     """
-    subfolders in the folder as sequence
-    :param p:
-    :return:
+    Returns a sequence of only the subdirectories in the given directory.
+    
+    Args:
+        p: Path or string path to the directory
     """
-    return children(p).filter(lambda f: f.is_dir())
+    path = Path(p) if isinstance(p, str) else p
+    return children(path).filter(lambda f: f.is_dir())
 
 
 def files(p: Path) -> Sequence:
     """
-    only files in the folder
-    :param p:
-    :return:
+    Returns a sequence of only the files in the given directory.
+    
+    Args:
+        p: Path to the directory
+        
+    Returns:
+        Sequence of Path objects representing files
     """
     return children(p).filter(lambda f: f.is_file())
 
 
 def with_ext(p: Path, ext: str) -> Sequence:
     """
-    files in the folder that have appropriate extension
-    :param p:
-    :param ext:
-    :return:
+    Returns files in the directory that have the specified extension.
+    
+    Args:
+        p: Path to the directory
+        ext: File extension to filter by (e.g., '.txt', '.py')
+        
+    Returns:
+        Sequence of Path objects representing matching files
     """
     return files(p).filter(lambda f: ext in f.suffix)
 
@@ -45,15 +57,17 @@ def by_ext(p: Path, ext: str) -> Sequence:
     return files(p).filter(lambda f: ext in f.suffix).group_by(lambda f: f.suffix)
 
 
-def rename_files_with_dictionary(files_or_path: Union[seq, Path], dictionary: dict, test: bool = False):
+def rename_files_with_dictionary(files_or_path: Union[Sequence, Path, str], dictionary: dict) -> list[tuple[str, str]]:
     """
-    File renaming based on a dictionary oldsubstring -> newsubstring pairs
-    :param files_or_path:
-    :param dictionary:
-    :param test:
-    :return:
+    Renames files based on a dictionary of old->new substring pairs.
+    
+    Args:
+        files_or_path: Path/string to a directory/file or a sequence of files
+        dictionary: Dictionary mapping old substrings to new substrings
     """
-
+    if isinstance(files_or_path, str):
+        files_or_path = Path(files_or_path)
+    
     if isinstance(files_or_path, Path):
         if files_or_path.is_dir():
             return rename_files_with_dictionary(files(files_or_path), dictionary=dictionary)
@@ -65,13 +79,12 @@ def rename_files_with_dictionary(files_or_path: Union[seq, Path], dictionary: di
             for k, v in dictionary.items():
                 if k in p.name:
                     new_name = p.name.replace(k, v)
-                    if not test:
-                        p.rename(Path(p.parent, p.name.replace(k, v)))
+                    p.rename(Path(p.parent, p.name.replace(k, v)))
                     results.append((p.name, new_name))
         return results
 
 
-def rename_files(files_or_path: Union[seq, Path], has: str, what: str, to: str):
+def rename_files(files_or_path: Union[Sequence, Path], has: str, what: str, to: str):
     """
     rename files that contain a substring
     :param files_or_path: sequence of files or folder #TODO: update to Union[seq, Path] when switched to python 3.10
@@ -89,7 +102,7 @@ def rename_files(files_or_path: Union[seq, Path], has: str, what: str, to: str):
         return files_or_path.map(lambda p: p if has not in p.name else p.rename(Path(p.parent, p.name.replace(what, to))))
 
 
-def rename_not_files(files: seq, not_has: str, what: str, to: str) -> seq:
+def rename_not_files(files: Sequence, not_has: str, what: str, to: str) -> Sequence:
     """
     rename files that do NOT contain a substring
     :param files: sequence of files
@@ -150,25 +163,30 @@ def replace_from_dict_in_file(file: Path, replacement: dict, output: Optional[Pa
         return output
 
 
-def traverse(p: Path, fun: Callable[[Path], bool] = None, max_depth: int = -1, flatten: bool = True, depth: int = 0) -> list:
+def traverse(p: Union[Path, str], fun: Callable[[Path], bool] = None, max_depth: int = -1, flatten: bool = True, depth: int = 0) -> list:
     """
-    traverses the files according to the condition and returns sequence with results
-    :param p: path to start from
-    :param fun: function to filter
-    :param max_depth: how deep to traverse
-    :param flatten: if we should flatten results
-    :param depth:
-    :return:
+    Recursively traverses a directory structure applying an optional filter function.
+    
+    Args:
+        p: Path or string path to start traversal from
+        fun: Optional filter function that takes a Path and returns bool
+        max_depth: Maximum depth to traverse (-1 for unlimited)
+        flatten: If True, returns a flat list; if False, maintains directory structure
+        depth: Current traversal depth (used internally)
+        
+    Returns:
+        List of Path objects that match the filter criteria
     """
-    fl = files(p).to_list() if fun is None else files(p).filter(fun).to_list()
-    folds = dirs(p).to_list() if fun is None else dirs(p).filter(fun).to_list()
+    path = Path(p) if isinstance(p, str) else p
+    fl = files(path).to_list() if fun is None else files(path).filter(fun).to_list()
+    folds = dirs(path).to_list() if fun is None else dirs(path).filter(fun).to_list()
     if depth == max_depth:
         return fl + folds
     else:
         if flatten:
-            return fl + folds + dirs(p).flat_map(lambda d: traverse(d, fun, max_depth, flatten, depth + 1)).to_list()
+            return fl + folds + dirs(path).flat_map(lambda d: traverse(d, fun, max_depth, flatten, depth + 1)).to_list()
         else:
-            return fl + folds + dirs(p).map(lambda d: traverse(d, fun, max_depth, flatten, depth + 1)).to_list()
+            return fl + folds + dirs(path).map(lambda d: traverse(d, fun, max_depth, flatten, depth + 1)).to_list()
 
 
 def tprint(p: Path, max_depth: int = -1,  prefix: str = "", debug: bool = False, depth: int = 0):

@@ -1,0 +1,49 @@
+[tool.poetry]
+name = "pycomfort"
+version = "0.0.0"  # This will be dynamically updated
+description = "Python helper methods to make life easier"
+authors = ["Anton Kulaga <antonkulaga@gmail.com>"]
+license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://github.com/antonkulaga/pycomfort"
+repository = "https://github.com/antonkulaga/pycomfort"
+keywords = ["python", "utils", "files"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: Unix",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+]
+
+[tool.poetry.dependencies]
+typer = ">=0.15.1"
+python = ">=3.10,<4.0"
+pyfunctional = "<=1.5.0"
+more-itertools = ">=10.5.0"
+python-dotenv = "*"
+Deprecated = ">=1.2.15"
+eliot = ">=1.16.0"
+eliot-tree = ">=24.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "8.3.4"
+
+[tool.poetry.scripts]
+replace = "pycomfort.comfort:replace"
+replace_dict = "pycomfort.comfort:replace_dict"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry-dynamic-versioning]
+enable = true
+vcs = "git"
+style = "semver"
+
+[tool.pytest.ini_options]
+addopts = "-v" 
